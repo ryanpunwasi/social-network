@@ -1,5 +1,7 @@
+require("dotenv").config();
 const router = require("express").Router();
 const bcrypt = require("bcryptjs"); // Required for password hashing
+const jwt = require("jsonwebtoken");
 const validator = require("../helpers/validation/validator");
 const usernameRules = require("../helpers/validation/usernameRules");
 const passwordRules = require("../helpers/validation/passwordRules");
@@ -24,8 +26,8 @@ module.exports = db => {
           bcrypt.compareSync(password, result.rows[0].password)
         ) {
           const user = { username: username, id: result.rows[0].id };
-
-          return res.status(200).json(user);
+          const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+          return res.status(200).json({ accessToken });
         }
         return res.status(401).send("Incorrect credentials.");
       }

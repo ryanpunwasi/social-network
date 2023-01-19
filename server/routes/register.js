@@ -27,7 +27,7 @@ module.exports = db => {
       `INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *`,
       [username, hashedPassword]
     )
-      .then(result => res.json({ success: "Yes" })) // CREATE SESSION
+      .then(() => res.status(200).send("Registration successful."))
       .catch(() => {
         return res.status(409).send("Username not available.");
       });
