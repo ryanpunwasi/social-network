@@ -1,14 +1,36 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs"); // Required for password hashing
 
+// Modules for validation
+const validator = require("../helpers/validation/validator");
+const usernameRules = require("../helpers/validation/usernameRules");
+const passwordRules = require("../helpers/validation/passwordRules");
+
 module.exports = db => {
-  router.post("/", function (req, res, next) {
-    const { username, password } = req.body;
+  router.post("/", function (req, res) {
+    const username = req.body.username.trim();
+    const password = req.body.password.trim();
+
+    const usernameError = validator(username, usernameRules);
+    const passwordError = validator(password, passwordRules);
+
+    if (usernameError.error) {
+      return res.json(usernameError.error);
+    }
+
+    if (passwordError.error) {
+      return res.json(passwordError.error);
+    }
+
     const hashedPassword = bcrypt.hashSync(password, 10);
     db.query(
       `INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *`,
       [username, hashedPassword]
-    ).then(result => res.json({ success: "Yes" }));
+    )
+      .then(result => res.json({ success: "Yes" })) // CREATE SESSION
+      .catch(() => {
+        return res.json({ error: "Username unavailable." });
+      });
   });
 
   return router;
