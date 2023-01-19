@@ -11,6 +11,7 @@ module.exports = db => {
     const username = req.body.username.trim();
     const password = req.body.password.trim();
 
+    // Validate username and password
     const usernameError = validator(username, usernameRules);
     const passwordError = validator(password, passwordRules);
 
@@ -19,12 +20,14 @@ module.exports = db => {
       return res.status(401).send("Incorrect credentials.");
     }
 
+    // Check provided credentials againsts database credentials
     db.query("SELECT * FROM users WHERE username = $1", [username]).then(
       result => {
         if (
           result.rows.length &&
           bcrypt.compareSync(password, result.rows[0].password)
         ) {
+          // Issue JWT if credentials match
           const user = { username: username, id: result.rows[0].id };
           const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
           return res.status(200).json({ accessToken });

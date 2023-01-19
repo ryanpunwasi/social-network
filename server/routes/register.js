@@ -11,9 +11,11 @@ module.exports = db => {
     const username = req.body.username.trim();
     const password = req.body.password.trim();
 
+    // Validate username and password
     const usernameError = validator(username, usernameRules);
     const passwordError = validator(password, passwordRules);
 
+    // Send 406 if username and password do not meet format criteria
     if (usernameError.error) {
       return res.status(406).send(usernameError.error);
     }
@@ -23,6 +25,8 @@ module.exports = db => {
     }
 
     const hashedPassword = bcrypt.hashSync(password, 10);
+
+    // Insert new user into database
     db.query(
       `INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *`,
       [username, hashedPassword]
