@@ -15,11 +15,11 @@ module.exports = db => {
     const passwordError = validator(password, passwordRules);
 
     if (usernameError.error) {
-      return res.json(usernameError.error);
+      return res.status(406).send(usernameError.error);
     }
 
     if (passwordError.error) {
-      return res.json(passwordError.error);
+      return res.status(406).send(passwordError.error);
     }
 
     const hashedPassword = bcrypt.hashSync(password, 10);
@@ -29,7 +29,7 @@ module.exports = db => {
     )
       .then(result => res.json({ success: "Yes" })) // CREATE SESSION
       .catch(() => {
-        return res.json({ error: "Username unavailable." });
+        return res.status(409).send("Username not available.");
       });
   });
 

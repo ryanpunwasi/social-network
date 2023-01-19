@@ -14,7 +14,7 @@ module.exports = db => {
 
     // Perform validation of username and password to avoid uneccessary calls to database
     if (usernameError.error || passwordError.error) {
-      return res.sendStatus(401);
+      return res.status(401).send("Incorrect credentials.");
     }
 
     db.query("SELECT * FROM users WHERE username = $1", [username]).then(
@@ -25,9 +25,9 @@ module.exports = db => {
         ) {
           const user = { username: username, id: result.rows[0].id };
 
-          return res.json(user);
+          return res.status(200).json(user);
         }
-        return res.sendStatus(401);
+        return res.status(401).send("Incorrect credentials.");
       }
     );
   });
