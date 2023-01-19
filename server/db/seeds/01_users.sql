@@ -1,1 +1,1 @@
-INSERT INTO users (id, username, password) VALUES (1, 'rick.sandchez@gmail.com', 'picklerick');
+INSERT INTO users (username, password) VALUES ('tom', '$2a$10$N6//N8WN63t9CuQYLqVVueDD4jsIPnFHDqF50CeT1pdfNcuXOnkDm');
