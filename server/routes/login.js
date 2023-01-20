@@ -8,8 +8,8 @@ const passwordRules = require("../helpers/validation/passwordRules");
 
 module.exports = db => {
   router.post("/", (req, res) => {
-    const username = req.body.username.trim() || "";
-    const password = req.body.password.trim() || "";
+    const username = req.body.username ? req.body.username.trim() : "";
+    const password = req.body.password ? req.body.password.trim() : "";
 
     // Validate username and password
     const usernameError = validator(username, usernameRules);
