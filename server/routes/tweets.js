@@ -1,18 +1,22 @@
 require("dotenv").config();
 const router = require("express").Router();
+const getTweet = require("../db/queries/getTweet");
 const jwt = require("jsonwebtoken");
 
 module.exports = db => {
-  router.get("/tweets", (req, res) => {
-    const username = req.body.username.trim();
-    const password = req.body.password.trim();
+  router.get("/:id", (req, res) => {
+    const id = req.params.id || null;
+    getTweet(db, id).then(tweet => {
+      if (tweet) return res.status(200).json({ tweet });
+      return res.status(404).send("Tweet not found.");
+    });
   });
 
-  router.post("/tweets", (req, res) => {});
+  router.post("/", (req, res) => {});
 
-  router.delete("/tweets", (req, res) => {});
+  router.delete("/", (req, res) => {});
 
-  router.put("/tweets", (req, res) => {});
+  router.put("/", (req, res) => {});
 
   return router;
 };
