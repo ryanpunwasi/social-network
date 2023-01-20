@@ -5,6 +5,7 @@ const validator = require("../helpers/validation/validator");
 const tweetRules = require("../helpers/validation/tweetRules");
 const getTweet = require("../db/queries/getTweet");
 const createTweet = require("../db/queries/createTweet");
+const deleteTweet = require("../db/queries/deleteTweet");
 const jwt = require("jsonwebtoken");
 
 module.exports = db => {
@@ -35,7 +36,21 @@ module.exports = db => {
     });
   });
 
-  router.delete("/", (req, res) => {});
+  router.delete("/", (req, res) => {
+    const accessToken = req.body.accessToken ? req.body.accessToken : null;
+    const tweetId = req.body.tweetId ? req.body.tweetId : null;
+
+    if (!tweetId)
+      return res.status(406).send("tweetId must be included in request.");
+
+    jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+      if (err) return res.sendStatus(401);
+      deleteTweet(db, user.id, tweetId).then(deleted => {
+        if (deleted) return res.status(200).send("Tweet deleted.");
+        return res.status(404).send("Tweet not found.");
+      });
+    });
+  });
 
   router.put("/", (req, res) => {});
 
