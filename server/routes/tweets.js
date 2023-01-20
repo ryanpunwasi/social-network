@@ -15,6 +15,8 @@ const deleteTweet = require("../db/queries/deleteTweet");
 module.exports = db => {
   router.get("/:id", (req, res) => {
     const id = req.params.id || null;
+    if (!Number.isInteger(parseInt(id)))
+      return res.status(406).send("Invalid tweet id.");
     getTweet(db, id).then(tweet => {
       if (tweet) return res.status(200).json({ tweet });
       return res.status(404).send("Tweet not found.");
